@@ -40,14 +40,297 @@ public final class POSForm extends JFrame{
         pnlItemControl.setVisible(false);
         pnlCusTable.setVisible(false);            
         displayTableButtons();
-        displayItems();pnlMainControl.setVisible(true);
-        pnlItemControl.setVisible(false);
-        pnlCusTable.setVisible(false);            
-        displayTableButtons();
-        displayItems();
+        displayItems();                    
+    }
+        
+    /**
+     * Display Customer table, Item control, New Table panels upon corresponding buttons clicked
+     * Customer table panel hasn't been inserted yet!!!
+     */              
+    private class PanelHandler
+        implements ActionListener
+    {        
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+                    
+        String cmd = e.getActionCommand();
+                                        
+        if(cmd.equals(ITEM_CONTROL)){
+            pnlItemControl.setVisible(true);
+            pnlMainControl.setVisible(false);
+            pnlCusTable.setVisible(false);
+            //Display existing food items
+            //displayItems();
+        }else if(cmd.equals(MAIN_CONTROL)){
+            pnlMainControl.setVisible(true);
+            pnlItemControl.setVisible(false);
+            pnlCusTable.setVisible(false);            
+            displayTableButtons();
+            displayItems();
+            
+        }else if(cmd.equals(CUS_TABLE)){
+            pnlCusTable.setVisible(true);
+            pnlMainControl.setVisible(false);
+            pnlItemControl.setVisible(false);
+            showOrders();
+            }
+        }
+    }
+            
+    /* Item management
+     * Load food items when opening
+     * Add new item, edit item properties
+     */
+    private class ItemHandler
+        implements ActionListener        
+    {                                          
+        @Override
+        public void actionPerformed(ActionEvent evt)
+        {                        
+            //Add or edit food items
+            String nm = txtName.getText();
+            String pr = txtPrice.getText();
+            double price = Double.parseDouble(pr);
+            String ct = txtCat.getText();
+            
+            String itemDetail = "메뉴명: " + nm + "\n"
+                    + "가격: " + pr + "\n"
+                    + "분류: " + ct;
+                                        
+            Object options[] = {"취소", "저장"};
+            int n = JOptionPane.showOptionDialog(pnlItemControl,
+                    "아래 메뉴를 저장하시겠습니까? \n" + itemDetail,
+                    "확인",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[1]);
+            if(n==0){
+                JOptionPane.showMessageDialog(pnlItemControl,
+                        "취소");               
+            }else{
+                JOptionPane.showMessageDialog(pnlItemControl,
+                        "저장");
+                                               
+                Item item = new Item(nm, price, ct);
+                saveItems(item);
+                
+                //displayItems(); // <<<< doesn't display newly added item immediately
+            }
+            
+        }
     }
     
+    /**
+     * Place a new order or cancel
+     */
     
+    private class NewOrderHandler
+        implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String cmd = e.getActionCommand();
+            if(cmd.equals(REMOVE_ITEM)){
+                int index = list.getSelectedIndex();
+                selItem.removeElementAt(index);
+            }else if(cmd.equals(PROCEED_ORDER)){
+                Object options[] = {"취소", "확인"};
+                String orderDetail = "테이블 번호: " + lblSelNum.getText() + "\n" +
+                        selItem.toString();
+                int n = JOptionPane.showOptionDialog(pnlNewOrder,
+                        "주문내역 확인 \n" + orderDetail,
+                        "주문확인",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        options,
+                        options[1]);
+                if(n==1){                
+                    JOptionPane.showMessageDialog(pnlNewOrder,
+                            "주문완료");
+                    int tblNum = Integer.parseInt(lblSelNum.getText());
+
+                    List<Item> ordered = new ArrayList<>();
+
+                    for(int k=0; k<selItem.size(); k++){
+                        String it = selItem.getElementAt(k).toString();
+                        Item item = itemMap.get(it);
+                        ordered.add(item);
+                        System.out.println(it + "has been added");
+                    }
+                    Order newOrder = new Order(tblNum, ordered);
+                    orderList.add(newOrder);
+                    
+                    System.out.println("A new order has been placed successfully");
+                    selItem.removeAllElements();
+                    lblSelNum.setText(null);
+                }
+                
+            }else if(cmd.equals(CLEAR_SELECTED)){
+                selItem.removeAllElements();
+                lblSelNum.setText(null);
+            }
+        }
+        
+    }
+    
+    /**
+     * When a table is selected,
+     * display the table number 
+     */
+    private class TblNumHandler
+            implements ActionListener
+    {                     
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            lblSelNum.setText(null);
+            String tblNum = e.getActionCommand();
+            int tn = Integer.parseInt(tblNum);
+            takenTables.add(tn);
+            lblSelNum.setText(tblNum);
+        }        
+    }
+    
+    /**
+     * When a table is selected,
+     * a dialog to get customer info will pop up
+     */
+    private class CusInfoDialog
+            implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(pnlMainControl, "Eggs are not supposed to be green.");
+        }
+        
+    }
+        
+    
+    
+    
+    /**
+     * Display the selected items in the list
+     */
+    private class OrderItemHandler
+        implements ActionListener
+    {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            String item = e.getActionCommand();                              
+            selItem.addElement(item);
+        }        
+    }
+    
+    /**
+     * Add new item to itemList, serialize the list
+     */    
+    public void saveItems(Item it){
+        itemMap.put(it.getName(), it);
+        serializeMap(itemMap);
+    }
+    
+    public void serializeMap(HashMap<String, Item> map){
+        try{
+            FileOutputStream fout = new FileOutputStream("itemMap.ser");
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(map);
+            oos.close();
+            fout.close();
+            System.out.println("Serialized Hashmap data is saved succesfully");
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Deserialize saved itemlist
+     * Display item details
+     * Set action listener on each item button
+     */    
+    public void displayItems(){
+        pnlItemButtons.removeAll();
+        itemMap = deserializeMap();
+        
+        int itemNum = itemMap.size();
+        int i = 0;
+        JButton[] itemButtons = new JButton[itemNum];
+        ActionListener picItem = new OrderItemHandler();
+        while(iterator.hasNext()){
+            String key = iterator.next();
+            Item it = itemMap.get(key);
+            String itemDetails = key + "\n" + it.getPrice();
+            itemButtons[i] = new JButton(itemDetails);
+            pnlItemButtons.add(itemButtons[i]);
+            
+            itemButtons[i].addActionListener(picItem);
+            itemButtons[i].setActionCommand(key);
+            i++;
+        }
+                
+    }
+    
+    public HashMap<String, Item> deserializeMap(){
+        try{
+            FileInputStream fin = new FileInputStream("itemMap.ser");
+            ObjectInputStream ois = new ObjectInputStream(fin);
+            itemMap = (HashMap) ois.readObject();
+            ois.close();
+            fin.close();
+            System.out.println("HashMap is deserialized succesfully");            
+            
+            iterator = itemMap.keySet().iterator();
+            
+            return itemMap;
+            
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+    }
+                        
+    /**
+     * Display table buttons with numbers
+     * When a table is selected, it will show the table number
+     * Show taken tables disabled
+     */
+    public void displayTableButtons(){
+        pnlPicTable.removeAll();        
+        JButton[] tblButtons = new JButton[numOfTables];
+        ActionListener picTblNum = new TblNumHandler();
+        ActionListener getCusInfo = new CusInfoDialog();
+        for(int i=0; i<numOfTables; i++){
+            int realNum = i + 1;
+            String tblNum = Integer.toString(realNum);            
+            tblButtons[i] = new JButton(tblNum);
+            pnlPicTable.add(tblButtons[i]);
+            if(takenTables.contains(realNum)){
+                tblButtons[i].setEnabled(false);
+            }else{
+            tblButtons[i].addActionListener(picTblNum);
+            tblButtons[i].addActionListener(getCusInfo);
+            tblButtons[i].setActionCommand(tblNum);
+            }
+        }
+    }
+    
+    /**
+     * Show current orders on Customer panel
+     */
+    public void showOrders(){
+        pnlCusShow.removeAll();
+        int cusNum = orderList.size();
+        JButton[] cusButtons = new JButton[cusNum];
+        for(int i=0; i<cusNum; i++){
+            String orderDetail = orderList.get(i).toString();
+            cusButtons[i] = new JButton(orderDetail);
+            cusButtons[i].setPreferredSize(new Dimension(100,100));
+            pnlCusShow.add(cusButtons[i]);
+        }
+    }
     
             
     /**
@@ -122,7 +405,7 @@ public final class POSForm extends JFrame{
     /**
      * Action commands
      */    
-    private static final String NEW_TABLE = "newtbl";
+    private static final String MAIN_CONTROL = "mainCtrl";
     private static final String ITEM_CONTROL = "itemctrl";
     private static final String CUS_TABLE = "custable";
     private static final String SALE_CLOSE = "cl";
@@ -175,7 +458,7 @@ public final class POSForm extends JFrame{
         //새테이블 버튼
         butMainControl = new JButton("Main Control");
         pnlControl.add(butMainControl);        
-        butMainControl.setActionCommand(NEW_TABLE);
+        butMainControl.setActionCommand(MAIN_CONTROL);
         //식당메뉴관리 버튼 
         butItemControl = new JButton("메뉴 관리");
         pnlControl.add(butItemControl);                
@@ -328,278 +611,5 @@ public final class POSForm extends JFrame{
         butCancelOrder.setActionCommand(CLEAR_SELECTED);
         
     }//end of createContent
-    
-    
-    
-    /**
-     * Display Customer table, Item control, New Table panels upon corresponding buttons clicked
-     * Customer table panel hasn't been inserted yet!!!
-     */              
-    private class PanelHandler
-        implements ActionListener
-    {        
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
-                    
-        String cmd = e.getActionCommand();
-                                        
-        if(cmd.equals(ITEM_CONTROL)){
-            pnlItemControl.setVisible(true);
-            pnlMainControl.setVisible(false);
-            pnlCusTable.setVisible(false);
-            //Display existing food items
-            //displayItems();
-        }else if(cmd.equals(NEW_TABLE)){
-            pnlMainControl.setVisible(true);
-            pnlItemControl.setVisible(false);
-            pnlCusTable.setVisible(false);            
-            displayTableButtons();
-            displayItems();
-            
-        }else if(cmd.equals(CUS_TABLE)){
-            pnlCusTable.setVisible(true);
-            pnlMainControl.setVisible(false);
-            pnlItemControl.setVisible(false);
-            showOrders();
-            }
-        }
-    }
-            
-    /* Item management
-     * Load food items when opening
-     * Add new item, edit item properties
-     */
-    private class ItemHandler
-        implements ActionListener        
-    {                                          
-        @Override
-        public void actionPerformed(ActionEvent evt)
-        {                        
-            //Add or edit food items
-            String nm = txtName.getText();
-            String pr = txtPrice.getText();
-            double price = Double.parseDouble(pr);
-            String ct = txtCat.getText();
-            
-            String itemDetail = "메뉴명: " + nm + "\n"
-                    + "가격: " + pr + "\n"
-                    + "분류: " + ct;
-                                        
-            Object options[] = {"취소", "저장"};
-            int n = JOptionPane.showOptionDialog(pnlItemControl,
-                    "아래 메뉴를 저장하시겠습니까? \n" + itemDetail,
-                    "확인",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    options,
-                    options[1]);
-            if(n==0){
-                JOptionPane.showMessageDialog(pnlItemControl,
-                        "취소");               
-            }else{
-                JOptionPane.showMessageDialog(pnlItemControl,
-                        "저장");
-                                               
-                Item item = new Item(nm, price, ct);
-                saveItems(item);
-                
-                //displayItems(); // <<<< doesn't display newly added item immediately
-            }
-            
-        }
-    }
-    
-    /**
-     * Place a new order or cancel
-     */
-    
-    private class NewOrderHandler
-        implements ActionListener
-    {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String cmd = e.getActionCommand();
-            if(cmd.equals(REMOVE_ITEM)){
-                int index = list.getSelectedIndex();
-                selItem.removeElementAt(index);
-            }else if(cmd.equals(PROCEED_ORDER)){
-                Object options[] = {"취소", "확인"};
-                String orderDetail = "테이블 번호: " + lblSelNum.getText() + "\n" +
-                        selItem.toString();
-                int n = JOptionPane.showOptionDialog(pnlNewOrder,
-                        "주문내역 확인 \n" + orderDetail,
-                        "주문확인",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        options,
-                        options[1]);
-                if(n==1){                
-                    JOptionPane.showMessageDialog(pnlNewOrder,
-                            "주문완료");
-                    int tblNum = Integer.parseInt(lblSelNum.getText());
-
-                    List<Item> ordered = new ArrayList<>();
-
-                    for(int k=0; k<selItem.size(); k++){
-                        String it = selItem.getElementAt(k).toString();
-                        Item item = itemMap.get(it);
-                        ordered.add(item);
-                        System.out.println(it + "has been added");
-                    }
-                    Order newOrder = new Order(tblNum, ordered);
-                    orderList.add(newOrder);
-                    
-                    System.out.println("A new order has been placed successfully");
-                    selItem.removeAllElements();
-                    lblSelNum.setText(null);
-                }
-                
-            }else if(cmd.equals(CLEAR_SELECTED)){
-                selItem.removeAllElements();
-                lblSelNum.setText(null);
-            }
-        }
-        
-    }
-    
-    /**
-     * When a table is selected,
-     * display the table number 
-     */
-    private class TblNumHandler
-            implements ActionListener
-    {                     
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            lblSelNum.setText(null);
-            String tblNum = e.getActionCommand();
-            int tn = Integer.parseInt(tblNum);
-            takenTables.add(tn);
-            lblSelNum.setText(tblNum);
-        }        
-    }
-    
-    /**
-     * Display the selected items in the list
-     */
-    private class OrderItemHandler
-        implements ActionListener
-    {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            
-            String item = e.getActionCommand();                              
-            selItem.addElement(item);
-        }        
-    }
-    
-    /**
-     * Add new item to itemList, serialize the list
-     */    
-    public void saveItems(Item it){
-        itemMap.put(it.getName(), it);
-        serializeMap(itemMap);
-    }
-    
-    public void serializeMap(HashMap<String, Item> map){
-        try{
-            FileOutputStream fout = new FileOutputStream("itemMap.ser");
-            ObjectOutputStream oos = new ObjectOutputStream(fout);
-            oos.writeObject(map);
-            oos.close();
-            fout.close();
-            System.out.println("Serialized Hashmap data is saved succesfully");
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
-    }
-    
-    /**
-     * Deserialize saved itemlist
-     * Display item details
-     * Set action listener on each item button
-     */    
-    public void displayItems(){
-        pnlItemButtons.removeAll();
-        itemMap = deserializeMap();
-        
-        int itemNum = itemMap.size();
-        int i = 0;
-        JButton[] itemButtons = new JButton[itemNum];
-        ActionListener picItem = new OrderItemHandler();
-        while(iterator.hasNext()){
-            String key = iterator.next();
-            Item it = itemMap.get(key);
-            String itemDetails = key + "\n" + it.getPrice();
-            itemButtons[i] = new JButton(itemDetails);
-            pnlItemButtons.add(itemButtons[i]);
-            
-            itemButtons[i].addActionListener(picItem);
-            itemButtons[i].setActionCommand(key);
-            i++;
-        }
-                
-    }
-    
-    public HashMap<String, Item> deserializeMap(){
-        try{
-            FileInputStream fin = new FileInputStream("itemMap.ser");
-            ObjectInputStream ois = new ObjectInputStream(fin);
-            itemMap = (HashMap) ois.readObject();
-            ois.close();
-            fin.close();
-            System.out.println("HashMap is deserialized succesfully");            
-            
-            iterator = itemMap.keySet().iterator();
-            
-            return itemMap;
-            
-        }catch(Exception ex){
-            ex.printStackTrace();
-            return null;
-        }
-    }
-                        
-    /**
-     * Display table buttons with numbers
-     * When a table is selected, it will show the table number
-     * Show taken tables disabled
-     */
-    public void displayTableButtons(){
-        pnlPicTable.removeAll();        
-        JButton[] tblButtons = new JButton[numOfTables];
-        ActionListener picTblNum = new TblNumHandler();
-        for(int i=0; i<numOfTables; i++){
-            int realNum = i + 1;
-            String tblNum = Integer.toString(realNum);            
-            tblButtons[i] = new JButton(tblNum);
-            pnlPicTable.add(tblButtons[i]);
-            if(takenTables.contains(realNum)){
-                tblButtons[i].setEnabled(false);
-            }else{
-            tblButtons[i].addActionListener(picTblNum);
-            tblButtons[i].setActionCommand(tblNum);
-            }
-        }
-    }
-    
-    /**
-     * Show current orders on Customer panel
-     */
-    public void showOrders(){
-        pnlCusShow.removeAll();
-        int cusNum = orderList.size();
-        JButton[] cusButtons = new JButton[cusNum];
-        for(int i=0; i<cusNum; i++){
-            String orderDetail = orderList.get(i).toString();
-            cusButtons[i] = new JButton(orderDetail);
-            cusButtons[i].setPreferredSize(new Dimension(100,100));
-            pnlCusShow.add(cusButtons[i]);
-        }
-    }
-    
         
 }
