@@ -35,6 +35,16 @@ public final class POSForm extends JFrame{
         itemMap = deserializeMap();
       
         createContent();
+        //when start, display the main control
+        pnlMainControl.setVisible(true);
+        pnlItemControl.setVisible(false);
+        pnlCusTable.setVisible(false);            
+        displayTableButtons();
+        displayItems();pnlMainControl.setVisible(true);
+        pnlItemControl.setVisible(false);
+        pnlCusTable.setVisible(false);            
+        displayTableButtons();
+        displayItems();
     }
     
     
@@ -50,11 +60,11 @@ public final class POSForm extends JFrame{
     JPanel pnlControl;
     JPanel pnlItemControl;      
     JPanel pnlCusTable;        
-    JPanel pnlNewTable;    
+    JPanel pnlMainControl;    
     
     JLayeredPane layeredPane;
             
-    JButton butNewTable;    
+    JButton butMainControl;    
     JButton butItemControl;
     JButton butCusTable;
             
@@ -120,7 +130,7 @@ public final class POSForm extends JFrame{
     private static final String REMOVE_ITEM = "rmItem";
     private static final String CLEAR_SELECTED = "delSel";
     private static final String PROCEED_ORDER = "orderIN";
-    private static final int numOfTable = 20;
+    private static final int numOfTables = 20;
     
     /**
      * Lists
@@ -163,9 +173,9 @@ public final class POSForm extends JFrame{
         pnlOperation.add(pnlControl);
         pnlControl.setBorder(new TitledBorder(new EtchedBorder(), "관리모드"));        
         //새테이블 버튼
-        butNewTable = new JButton("새 테이블");
-        pnlControl.add(butNewTable);        
-        butNewTable.setActionCommand(NEW_TABLE);
+        butMainControl = new JButton("Main Control");
+        pnlControl.add(butMainControl);        
+        butMainControl.setActionCommand(NEW_TABLE);
         //식당메뉴관리 버튼 
         butItemControl = new JButton("메뉴 관리");
         pnlControl.add(butItemControl);                
@@ -183,7 +193,7 @@ public final class POSForm extends JFrame{
         ActionListener paneAction = new PanelHandler();
         butExit.addActionListener(paneAction);
         pnlSubOperation.add(butExit);        
-        butNewTable.addActionListener(paneAction);
+        butMainControl.addActionListener(paneAction);
         butItemControl.addActionListener(paneAction);
         butCusTable.addActionListener(paneAction);
         
@@ -261,11 +271,11 @@ public final class POSForm extends JFrame{
         pnlPayDetail.add(pnlSubDetail3);
               
         //Add new table panel
-        pnlNewTable = new JPanel(new GridLayout(2,1));
-        pnlNewTable.setSize(900, 700);
-        pnlNewTable.setBorder(new TitledBorder(new EtchedBorder(), "테이블 추가"));
-        layeredPane.add(pnlNewTable);
-        pnlNewTable.setVisible(false);        
+        pnlMainControl = new JPanel(new GridLayout(2,1));
+        pnlMainControl.setSize(900, 700);
+        pnlMainControl.setBorder(new TitledBorder(new EtchedBorder(), "테이블 추가"));
+        layeredPane.add(pnlMainControl);
+        pnlMainControl.setVisible(false);        
         
         pnlCusInfo = new JPanel(new GridLayout(1,2));
         pnlNewOrder = new JPanel(new BorderLayout());
@@ -306,8 +316,8 @@ public final class POSForm extends JFrame{
         pnlCusInfo.add(pnlNewOrder);
         pnlCusInfo.add(pnlPicTable); 
         
-        pnlNewTable.add(pnlCusInfo);        
-        pnlNewTable.add(pnlItemButtons);
+        pnlMainControl.add(pnlCusInfo);        
+        pnlMainControl.add(pnlItemButtons);
         
         ActionListener newOrder = new NewOrderHandler();
         butRemove.addActionListener(newOrder);
@@ -336,21 +346,20 @@ public final class POSForm extends JFrame{
                                         
         if(cmd.equals(ITEM_CONTROL)){
             pnlItemControl.setVisible(true);
-            pnlNewTable.setVisible(false);
+            pnlMainControl.setVisible(false);
             pnlCusTable.setVisible(false);
             //Display existing food items
             //displayItems();
         }else if(cmd.equals(NEW_TABLE)){
-            pnlNewTable.setVisible(true);
+            pnlMainControl.setVisible(true);
             pnlItemControl.setVisible(false);
-            pnlCusTable.setVisible(false);
-            //Display available tables
-            picTable();
+            pnlCusTable.setVisible(false);            
+            displayTableButtons();
             displayItems();
             
         }else if(cmd.equals(CUS_TABLE)){
             pnlCusTable.setVisible(true);
-            pnlNewTable.setVisible(false);
+            pnlMainControl.setVisible(false);
             pnlItemControl.setVisible(false);
             showOrders();
             }
@@ -457,7 +466,8 @@ public final class POSForm extends JFrame{
     }
     
     /**
-     * Display the selected table number 
+     * When a table is selected,
+     * display the table number 
      */
     private class TblNumHandler
             implements ActionListener
@@ -555,13 +565,14 @@ public final class POSForm extends JFrame{
                         
     /**
      * Display table buttons with numbers
+     * When a table is selected, it will show the table number
      * Show taken tables disabled
      */
-    public void picTable(){
+    public void displayTableButtons(){
         pnlPicTable.removeAll();        
-        JButton[] tblButtons = new JButton[numOfTable];
+        JButton[] tblButtons = new JButton[numOfTables];
         ActionListener picTblNum = new TblNumHandler();
-        for(int i=0; i<numOfTable; i++){
+        for(int i=0; i<numOfTables; i++){
             int realNum = i + 1;
             String tblNum = Integer.toString(realNum);            
             tblButtons[i] = new JButton(tblNum);
