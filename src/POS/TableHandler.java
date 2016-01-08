@@ -14,7 +14,11 @@ import java.util.ArrayList;
 public class TableHandler {
     ArrayList<Table> cusTblList;
     
+<<<<<<< .merge_file_WoxSue
     public void addTable(String str){
+=======
+    public void addTable(Table table){
+>>>>>>> .merge_file_D16Rkf
         
     }
     
