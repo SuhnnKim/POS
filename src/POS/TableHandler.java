@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class TableHandler {
     ArrayList<Table> cusTblList;
     
-    public void addTable(int t){
+    public void addTable(Table table){
         
     }
     
