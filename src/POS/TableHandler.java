@@ -6,20 +6,32 @@
 package POS;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  * @author Suhn
  */
-public class TableHandler {
-    ArrayList<Table> cusTblList;
+public class TableHandler {    
+    HashMap<Integer, Table> cusTblList = new HashMap();
+    private static TableHandler theInstance = null;
     
-
-    public void addTable(Table table){
-        
+    public static TableHandler getInstance(){
+        if(theInstance==null){
+            theInstance = new TableHandler();            
+        }
+        return theInstance;
     }
     
-    public void occupyTable(int t){
-        
+    public void addTable(int t, Table table){
+        cusTblList.put(t, table);
+    }
+    
+    public void occupyTable(int tblNum, String cusInfo){
+        Table tbl = new Table();
+        tbl.setTblNum(tblNum);
+        tbl.setCusInfo(cusInfo);
+        addTable(tblNum, tbl);
+        System.out.println("The table is occupied");
     }
 }

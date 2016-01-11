@@ -12,12 +12,27 @@ package POS;
  * @author Suhn
  */
 public class Table {
-    int tableNumber;
-    boolean occupied;
-    long sittingTime;
-    Order order;
+    private int tableNumber;
+    private String customerInfo;
+    private boolean occupied = false;
+    private long sittingTime;
+    private Order order;
     
     public Table(){
-        
+        this.occupied = true;
+        this.sittingTime = System.currentTimeMillis();
+    }
+    
+    public void setTblNum(int tn){
+        this.tableNumber=tn;
+    }
+    
+    public void setCusInfo(String cus){
+        this.customerInfo = cus;
+    }
+    
+    public long getSittingTime(){
+        long diff = System.currentTimeMillis() - this.sittingTime;
+        return diff;
     }
 }

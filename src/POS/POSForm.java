@@ -40,7 +40,9 @@ public final class POSForm extends JFrame{
         pnlItemControl.setVisible(false);
         pnlCusTable.setVisible(false);            
         displayTableButtons();
-        displayItems();                    
+        displayItems();
+        
+        th = TableHandler.getInstance();
     }
         
     /**
@@ -198,14 +200,21 @@ public final class POSForm extends JFrame{
      * When a table is selected,
      * a dialog to get customer info will pop up
      */
-    private class CusInfoDialog
+    private class CusInfoHandler
             implements ActionListener
-    {
+    {        
         @Override
         public void actionPerformed(ActionEvent e) {
-            JOptionPane.showMessageDialog(pnlMainControl, "Eggs are not supposed to be green.");
-        }
-        
+            String info = (String)JOptionPane.showInputDialog(
+                    pnlMainControl, "Enter customer information");
+            CUSTOMER_INFO = info;            
+            String tblNum = e.getActionCommand();            
+            occupyTable(Integer.parseInt(tblNum), info);
+        }        
+    }
+    
+    public void occupyTable(int tn, String cusInfo){
+        th.occupyTable(tn, cusInfo);
     }
         
     
@@ -300,8 +309,12 @@ public final class POSForm extends JFrame{
     public void displayTableButtons(){
         pnlPicTable.removeAll();        
         JButton[] tblButtons = new JButton[numOfTables];
+        // showing table number when button is selected
         ActionListener picTblNum = new TblNumHandler();
-        ActionListener getCusInfo = new CusInfoDialog();
+        // getting customer info
+        ActionListener getCusInfo = new CusInfoHandler();
+        
+        // labelling each button with table number
         for(int i=0; i<numOfTables; i++){
             int realNum = i + 1;
             String tblNum = Integer.toString(realNum);            
@@ -310,6 +323,7 @@ public final class POSForm extends JFrame{
             if(takenTables.contains(realNum)){
                 tblButtons[i].setEnabled(false);
             }else{
+            // add Action Listeners
             tblButtons[i].addActionListener(picTblNum);
             tblButtons[i].addActionListener(getCusInfo);
             tblButtons[i].setActionCommand(tblNum);
@@ -414,6 +428,8 @@ public final class POSForm extends JFrame{
     private static final String CLEAR_SELECTED = "delSel";
     private static final String PROCEED_ORDER = "orderIN";
     private static final int numOfTables = 20;
+    private static String CUSTOMER_INFO = "";
+    TableHandler th;
     
     /**
      * Lists
