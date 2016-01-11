@@ -14,8 +14,9 @@ import java.util.HashMap;
  */
 public class TableHandler {    
     HashMap<Integer, Table> cusTblList = new HashMap();
-    POSForm pf = POSForm.getInstance();
-    private static TableHandler theInstance = null;
+    
+    
+    private static TableHandler theInstance;
     
     public static TableHandler getInstance(){
         if(theInstance==null){
@@ -34,6 +35,7 @@ public class TableHandler {
         tbl.setCusInfo(cusInfo);
         addTable(tblNum, tbl);
         
+        POSForm pf = POSForm.getInstance();
         pf.displayOccupied(tblNum);
     }
 }

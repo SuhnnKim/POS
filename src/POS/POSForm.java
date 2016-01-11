@@ -333,7 +333,8 @@ public final class POSForm extends JFrame{
      * Show a customer table occupied
      */
     public void displayOccupied(int tn){
-        tblButtons[tn].setBackground(Color.red);
+        tblButtons[tn-1].setOpaque(true);
+        tblButtons[tn-1].setBackground(Color.red);                
     }
     
     /**
