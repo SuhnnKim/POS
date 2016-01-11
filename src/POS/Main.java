@@ -19,7 +19,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        POSForm pos = new POSForm();
+        POSForm pos = POSForm.getInstance();
         
         pos.setVisible(true);
         

@@ -14,6 +14,7 @@ import java.util.HashMap;
  */
 public class TableHandler {    
     HashMap<Integer, Table> cusTblList = new HashMap();
+    POSForm pf = POSForm.getInstance();
     private static TableHandler theInstance = null;
     
     public static TableHandler getInstance(){
@@ -32,6 +33,7 @@ public class TableHandler {
         tbl.setTblNum(tblNum);
         tbl.setCusInfo(cusInfo);
         addTable(tblNum, tbl);
-        System.out.println("The table is occupied");
+        
+        pf.displayOccupied(tblNum);
     }
 }

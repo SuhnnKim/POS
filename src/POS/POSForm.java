@@ -1,6 +1,7 @@
 package POS;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -29,6 +30,7 @@ import javax.swing.border.TitledBorder;
  * @author suhnmikim
  */
 public final class POSForm extends JFrame{
+    private static POSForm theInstance;
     
     public POSForm(){
         this.itemMap = new HashMap<>();
@@ -43,6 +45,13 @@ public final class POSForm extends JFrame{
         displayItems();
         
         th = TableHandler.getInstance();
+    }
+    
+    public static POSForm getInstance(){
+        if(theInstance==null){
+            theInstance = new POSForm();            
+        }
+        return theInstance;
     }
         
     /**
@@ -190,8 +199,7 @@ public final class POSForm extends JFrame{
         public void actionPerformed(ActionEvent e) {
             lblSelNum.setText(null);
             String tblNum = e.getActionCommand();
-            int tn = Integer.parseInt(tblNum);
-            takenTables.add(tn);
+            int tn = Integer.parseInt(tblNum);            
             lblSelNum.setText(tblNum);
         }        
     }
@@ -209,17 +217,10 @@ public final class POSForm extends JFrame{
                     pnlMainControl, "Enter customer information");
             CUSTOMER_INFO = info;            
             String tblNum = e.getActionCommand();            
-            occupyTable(Integer.parseInt(tblNum), info);
+            th.occupyTable(Integer.parseInt(tblNum), info);
         }        
     }
-    
-    public void occupyTable(int tn, String cusInfo){
-        th.occupyTable(tn, cusInfo);
-    }
-        
-    
-    
-    
+      
     /**
      * Display the selected items in the list
      */
@@ -308,7 +309,7 @@ public final class POSForm extends JFrame{
      */
     public void displayTableButtons(){
         pnlPicTable.removeAll();        
-        JButton[] tblButtons = new JButton[numOfTables];
+        tblButtons = new JButton[numOfTables];
         // showing table number when button is selected
         ActionListener picTblNum = new TblNumHandler();
         // getting customer info
@@ -320,15 +321,19 @@ public final class POSForm extends JFrame{
             String tblNum = Integer.toString(realNum);            
             tblButtons[i] = new JButton(tblNum);
             pnlPicTable.add(tblButtons[i]);
-            if(takenTables.contains(realNum)){
-                tblButtons[i].setEnabled(false);
-            }else{
+            
             // add Action Listeners
             tblButtons[i].addActionListener(picTblNum);
             tblButtons[i].addActionListener(getCusInfo);
-            tblButtons[i].setActionCommand(tblNum);
-            }
+            tblButtons[i].setActionCommand(tblNum);            
         }
+    }
+    
+    /**
+     * Show a customer table occupied
+     */
+    public void displayOccupied(int tn){
+        tblButtons[tn].setBackground(Color.red);
     }
     
     /**
@@ -364,6 +369,7 @@ public final class POSForm extends JFrame{
     JButton butMainControl;    
     JButton butItemControl;
     JButton butCusTable;
+    JButton[] tblButtons;
             
     JScrollPane scrPane;
     
@@ -442,10 +448,7 @@ public final class POSForm extends JFrame{
     
     //Order list
     static List<Order> orderList = new ArrayList<>();
-    
-    //Taken table number list
-    static List<Integer> takenTables = new ArrayList<>();
-    
+        
     /**
      * Create contents when starting the form
      */    
