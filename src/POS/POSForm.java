@@ -337,6 +337,12 @@ public final class POSForm extends JFrame{
         tblButtons[tn-1].setBackground(Color.red);                
     }
     
+    public void enableOrder(int tn){
+        tblButtons[tn-1].addActionListener(null);
+    }
+    
+    
+    
     /**
      * Show current orders on Customer panel
      */
