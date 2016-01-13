@@ -223,15 +223,21 @@ public final class POSForm extends JFrame{
       
     /**
      * Display the selected items in the list
+     * If the table has no customer it will show a dialog
      */
     private class OrderItemHandler
         implements ActionListener
     {
         @Override
         public void actionPerformed(ActionEvent e) {
-            
-            String item = e.getActionCommand();                              
-            selItem.addElement(item);
+            String tblNum = lblSelNum.getText();            
+            if(!tblNum.equals("")){
+                String item = e.getActionCommand();                              
+                selItem.addElement(item);
+            }else{
+                JOptionPane.showMessageDialog(pnlMainControl,
+                        "Select a table first");
+            }
         }        
     }
     
@@ -335,13 +341,7 @@ public final class POSForm extends JFrame{
     public void displayOccupied(int tn){
         tblButtons[tn-1].setOpaque(true);
         tblButtons[tn-1].setBackground(Color.red);                
-    }
-    
-    public void enableOrder(int tn){
-        tblButtons[tn-1].addActionListener(null);
-    }
-    
-    
+    }                
     
     /**
      * Show current orders on Customer panel

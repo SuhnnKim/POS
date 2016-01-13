@@ -7,6 +7,7 @@ package POS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  *
@@ -14,6 +15,8 @@ import java.util.HashMap;
  */
 public class TableHandler {    
     HashMap<Integer, Table> cusTblList = new HashMap();
+    private boolean readyToOrder = false;
+    Set tableNumbers = cusTblList.keySet();
     
     
     private static TableHandler theInstance;
@@ -24,6 +27,13 @@ public class TableHandler {
         }
         return theInstance;
     }
+    
+//    public boolean isReadyToOrder(int tb){
+//        if(tableNumbers.contains(tb)){
+//            readyToOrder = true;
+//        }        
+//        return readyToOrder;
+//    }
     
     public void addTable(int t, Table table){
         cusTblList.put(t, table);

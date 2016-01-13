@@ -14,19 +14,14 @@ package POS;
 public class Table {
     private int tableNumber;
     private String customerInfo;
-    private boolean occupied = false;
-    private boolean readyToOrder = false;
+    private boolean occupied = false;    
     private long sittingTime;
     private Order order;
     
     public Table(){
         this.occupied = true;
         this.sittingTime = System.currentTimeMillis();
-        this.readyToOrder = true;
-    }
-    
-    public boolean isReadyToOrder(){
-        return readyToOrder;
+        
     }
     
     public void setTblNum(int tn){
