@@ -207,6 +207,8 @@ public final class POSForm extends JFrame{
     /**
      * When a table is selected,
      * a dialog to get customer info will pop up
+     * If 'cancel' is clicked, table selection will be cancelled
+     * No customer info input will be accepted
      */
     private class CusInfoHandler
             implements ActionListener
@@ -217,7 +219,16 @@ public final class POSForm extends JFrame{
                     pnlMainControl, "Enter customer information");
             CUSTOMER_INFO = info;            
             String tblNum = e.getActionCommand();            
-            th.occupyTable(Integer.parseInt(tblNum), info);
+                        
+            String okMsg = info + " is sitting at table " + tblNum;
+            String cancelMsg = "Table selection is cancelled";
+            
+            if(info==null){
+                JOptionPane.showMessageDialog(pnlMainControl, cancelMsg);
+            }else{
+                JOptionPane.showMessageDialog(pnlMainControl, okMsg);
+                th.occupyTable(Integer.parseInt(tblNum), info);
+            }
         }        
     }
       
