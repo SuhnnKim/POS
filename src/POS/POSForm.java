@@ -206,34 +206,19 @@ public final class POSForm extends JFrame{
     
     /**
      * When a table is selected,
-     * a dialog to get customer info will pop up
-     * If 'cancel' is clicked, table selection will be canceled.
-     * No customer info input will be accepted.
-     * Implemented only when the table is not already occupied
+     * 
      */
-    private class CusInfoHandler
-            implements ActionListener
-    {        
+    private class TblButtonHandler
+        implements ActionListener{
+
         @Override
         public void actionPerformed(ActionEvent e) {
             String tblNum = e.getActionCommand();
             // check if the table is already occupied
             if(!th.isOccupied(Integer.parseInt(tblNum))){
-                String info = (String)JOptionPane.showInputDialog(
-                        pnlMainControl, "Enter customer information");
-                CUSTOMER_INFO = info;  
-                
-                String okMsg = info + " is sitting at table " + tblNum;
-                String cancelMsg = "Table selection is cancelled";
-
-                if(info==null){
-                    JOptionPane.showMessageDialog(pnlMainControl, cancelMsg);
-                }else{
-                    JOptionPane.showMessageDialog(pnlMainControl, okMsg);
-                    th.occupyTable(Integer.parseInt(tblNum), info);
-                }
-            }                                         
-        }        
+                setCusInfo(Integer.parseInt(tblNum));
+            }
+        }   
     }
       
     /**
@@ -300,8 +285,30 @@ public final class POSForm extends JFrame{
             itemButtons[i].addActionListener(picItem);
             itemButtons[i].setActionCommand(key);
             i++;
-        }
+        }             
+    }
+    
+    /**
+     * When an empty table is selected,
+     * a dialog to get customer info will pop up
+     * If 'cancel' is clicked, table selection will be canceled.
+     * No customer info input will be accepted.
+     * Implemented only when the table is not already occupied
+     */
+    public void setCusInfo(int tblNum){
+        String info = (String)JOptionPane.showInputDialog(
+                        pnlMainControl, "Enter customer information");
+                CUSTOMER_INFO = info;  
                 
+                String okMsg = info + " is sitting at table " + tblNum;
+                String cancelMsg = "Table selection is cancelled";
+
+                if(info==null){
+                    JOptionPane.showMessageDialog(pnlMainControl, cancelMsg);
+                }else{
+                    JOptionPane.showMessageDialog(pnlMainControl, okMsg);
+                    th.occupyTable((tblNum), info);
+                }
     }
     
     public HashMap<String, Item> deserializeMap(){
@@ -334,7 +341,7 @@ public final class POSForm extends JFrame{
         // showing table number when button is selected
         ActionListener picTblNum = new TblNumHandler();
         // getting customer info
-        ActionListener getCusInfo = new CusInfoHandler();
+        ActionListener tblHandler = new TblButtonHandler();
         
         // labelling each button with table number
         for(int i=0; i<numOfTables; i++){
@@ -345,7 +352,7 @@ public final class POSForm extends JFrame{
             
             // add Action Listeners
             tblButtons[i].addActionListener(picTblNum);
-            tblButtons[i].addActionListener(getCusInfo);
+            tblButtons[i].addActionListener(tblHandler);
             tblButtons[i].setActionCommand(tblNum);            
         }
     }
