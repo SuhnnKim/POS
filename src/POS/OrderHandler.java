@@ -33,6 +33,10 @@ public class OrderHandler {
         newOrder.setOrderNum(currentOrderNumber);
     }
     
+    public String getDetails(int tn){
+        String orderDetail = orderList.get(tn).getDetails();
+        return orderDetail;
+    }
     /**
      * Show current orders on Customer panel
      */
@@ -54,4 +58,5 @@ public class OrderHandler {
 //                this.getTotal();
 //        return orderDetail;
 //    }
+    
 }

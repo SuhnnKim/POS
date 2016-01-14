@@ -216,7 +216,8 @@ public final class POSForm extends JFrame{
     
     /**
      * When a table is selected,
-     * 
+     * Occupy if it's empty
+     * Otherwise, show details of current state
      */
     private class TblButtonHandler
         implements ActionListener{
@@ -227,8 +228,23 @@ public final class POSForm extends JFrame{
             // check if the table is already occupied
             if(!th.isOccupied(Integer.parseInt(tblNum))){
                 setCusInfo(Integer.parseInt(tblNum));
+            }else{
+                showTableDetails(Integer.parseInt(tblNum));
             }
         }   
+    }
+    
+    public void showTableDetails(int tn){
+        // table number, customer info, state, order details
+        String cus = "Customer Info: " + th.getCusInfo(tn);
+        String order = "Order Details: " + oh.getDetails(tn);
+        
+        
+        String info = "Table number: " + tn + "\n" +
+                        cus + "\n" +
+                        order + "\n";
+        
+        tableInfo.setText(info);
     }
       
     /**
@@ -422,10 +438,11 @@ public final class POSForm extends JFrame{
     JLabel lblTblNum;
     JLabel lblSelNum;
     JLabel lblOrder;
+    JTextPane tableInfo;
     JButton butRemove;
     JButton butConfirmOrder;
     JButton butCancelOrder;
-    
+     
     //Customer Table components
     JPanel pnlCusShow;
     JPanel pnlPayment;
@@ -444,7 +461,7 @@ public final class POSForm extends JFrame{
     JLabel lblOrderInfo;
     JLabel lblorderedItems;
     JLabel lblQty;
-    JLabel lblPrc;
+    JLabel lblPrc;    
     
     /**
      * Action commands
@@ -649,6 +666,10 @@ public final class POSForm extends JFrame{
         jsp = new JScrollPane(pnlItemButtons, v, h);        
         pnlTableInfo = new JPanel();
         pnlTableInfo.setBorder(new TitledBorder(new EtchedBorder(), "Table Details"));
+        // table number, customer info, state, order details
+        tableInfo = new JTextPane();        
+        tableInfo.setEditable(false);
+        pnlTableInfo.add(tableInfo);
         
         pnlCusInfo.add(pnlNewOrder);
         pnlCusInfo.add(pnlPicTable); 

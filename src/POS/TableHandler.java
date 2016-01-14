@@ -15,9 +15,13 @@ import java.util.Set;
  */
 public class TableHandler {    
     private static TableHandler theInstance;
-    HashMap<Integer, Table> cusTblList = new HashMap();
+    HashMap<Integer, Table> cusTblList = new HashMap();    
+    Set tableNumbers = cusTblList.keySet();
+    
     private boolean isOccupied = false;
-    Set tableNumbers = cusTblList.keySet();  
+    private boolean hasOrdered = false;
+    private boolean foodDelivered = false;
+    private boolean hasPaid = false;
     
     public static TableHandler getInstance(){
         if(theInstance==null){
@@ -47,5 +51,12 @@ public class TableHandler {
         
         POSForm pf = POSForm.getInstance();
         pf.displayOccupied(tblNum);
+    }
+    
+    public String getCusInfo(int tblNum){
+        String cusInfo = "";
+        Table t = cusTblList.get(tblNum);
+        cusInfo = t.getCusInfo();
+        return cusInfo;
     }
 }

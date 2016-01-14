@@ -34,6 +34,10 @@ public class Order {
         return i;
     }
     
+    public String getDetails(){
+        return this.orderedItems.toString();        
+    }
+    
     public double getTotal(){
         double total=0;
         for(Item item : orderedItems){

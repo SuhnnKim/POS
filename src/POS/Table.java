@@ -16,7 +16,7 @@ public class Table {
     private String customerInfo;
     private boolean occupied = false;    
     private long sittingTime;
-    private Order order;
+    private Order order; // is this really necessary?
     
     public Table(){
         this.occupied = true;
@@ -32,8 +32,17 @@ public class Table {
         this.customerInfo = cus;
     }
     
+    public String getCusInfo(){
+        return this.customerInfo;
+    }
+    
     public long getSittingTime(){
         long diff = System.currentTimeMillis() - this.sittingTime;
         return diff;
+    }
+    
+    // connecting table and order... is this really necessary?
+    public void setOrder(Order o){
+        this.order = o;
     }
 }
