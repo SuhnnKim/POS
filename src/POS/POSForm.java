@@ -143,46 +143,55 @@ public final class POSForm extends JFrame{
     {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String cmd = e.getActionCommand();
-            if(cmd.equals(REMOVE_ITEM)){
-                int index = list.getSelectedIndex();
-                selItem.removeElementAt(index);
-            }else if(cmd.equals(PROCEED_ORDER)){
-                Object options[] = {"Cancel", "OK"};
-                String orderDetail = "Table Number: " + lblSelNum.getText() + "\n" +
-                        selItem.toString();
-                int n = JOptionPane.showOptionDialog(pnlNewOrder,
-                        "Ordering below \n" + orderDetail,
-                        "Confirm Order",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        options,
-                        options[1]);
-                if(n==1){                
-                    JOptionPane.showMessageDialog(pnlNewOrder,
-                            "Order is placed");
-                    int tblNum = Integer.parseInt(lblSelNum.getText());
+            if(selItem.isEmpty()){
+                String noItem = "No item is selected";
+                
+                JOptionPane.showMessageDialog(pnlMainControl,
+			    noItem,
+			    "Inane warning",
+    			JOptionPane.WARNING_MESSAGE);                
+            }else{            
+                String cmd = e.getActionCommand();
+                if(cmd.equals(REMOVE_ITEM)){
+                    int index = list.getSelectedIndex();
+                    selItem.removeElementAt(index);
+                }else if(cmd.equals(PROCEED_ORDER)){
+                    Object options[] = {"Cancel", "OK"};
+                    String orderDetail = "Table Number: " + lblSelNum.getText() + "\n" +
+                            selItem.toString();
+                    int n = JOptionPane.showOptionDialog(pnlNewOrder,
+                            "Ordering below \n" + orderDetail,
+                            "Confirm Order",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.PLAIN_MESSAGE,
+                            null,
+                            options,
+                            options[1]);
+                    if(n==1){                
+                        JOptionPane.showMessageDialog(pnlNewOrder,
+                                "Order is placed");
+                        int tblNum = Integer.parseInt(lblSelNum.getText());
 
-                    List<Item> ordered = new ArrayList<>();
+                        List<Item> ordered = new ArrayList<>();
 
-                    for(int k=0; k<selItem.size(); k++){
-                        String it = selItem.getElementAt(k).toString();
-                        Item item = itemMap.get(it);
-                        ordered.add(item);
-                        System.out.println(it + "has been added");
+                        for(int k=0; k<selItem.size(); k++){
+                            String it = selItem.getElementAt(k).toString();
+                            Item item = itemMap.get(it);
+                            ordered.add(item);
+                            System.out.println(it + "has been added");
+                        }
+                        Order newOrder = new Order(tblNum, ordered);
+                        orderList.add(newOrder);
+
+                        System.out.println("A new order has been placed successfully");
+                        selItem.removeAllElements();
+                        lblSelNum.setText("");
                     }
-                    Order newOrder = new Order(tblNum, ordered);
-                    orderList.add(newOrder);
-                    
-                    System.out.println("A new order has been placed successfully");
+
+                }else if(cmd.equals(CLEAR_SELECTED)){
                     selItem.removeAllElements();
                     lblSelNum.setText("");
                 }
-                
-            }else if(cmd.equals(CLEAR_SELECTED)){
-                selItem.removeAllElements();
-                lblSelNum.setText("");
             }
         }
         
