@@ -417,6 +417,7 @@ public final class POSForm extends JFrame{
     JPanel pnlSubNewOrder3;
     JPanel pnlSubNewOrder4;
     JPanel pnlPicTable;
+    JPanel pnlTableInfo;
     JScrollPane jsp;
     JLabel lblTblNum;
     JLabel lblSelNum;
@@ -483,6 +484,7 @@ public final class POSForm extends JFrame{
     void createContent(){        
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);        
         setTitle("딸내미가 프로그래머 POS");
+        this.setExtendedState(MAXIMIZED_BOTH);
         
         //Frame layout
         this.setLayout(new BorderLayout());
@@ -602,33 +604,35 @@ public final class POSForm extends JFrame{
               
         //Add new table panel
         pnlMainControl = new JPanel(new GridLayout(2,1));
-        pnlMainControl.setSize(900, 700);
-        pnlMainControl.setBorder(new TitledBorder(new EtchedBorder(), "테이블 추가"));
+        pnlMainControl.setSize(1200, 700);
+        pnlMainControl.setBorder(new TitledBorder(new EtchedBorder(), "Main Control"));
         layeredPane.add(pnlMainControl);
         pnlMainControl.setVisible(false);        
         
-        pnlCusInfo = new JPanel(new GridLayout(1,2));
+        pnlCusInfo = new JPanel(new GridLayout(1,3));
         pnlNewOrder = new JPanel(new BorderLayout());
         pnlSubNewOrder = new JPanel(new GridLayout(2,2));
+        pnlSubNewOrder.setSize(100, 100);
         
-        lblTblNum = new JLabel("테이블 번호: ");
+        lblTblNum = new JLabel("Selected Table Number: ");
         lblSelNum = new JLabel();
-        lblOrder = new JLabel("주문 음식: ");
+        lblOrder = new JLabel("Foods to be ordered: ");
         pnlSubNewOrder.add(lblTblNum);
         pnlSubNewOrder.add(lblSelNum);
         pnlSubNewOrder.add(lblOrder);
                 
         scrPane = new JScrollPane(list);
         
-        pnlSubNewOrder3 = new JPanel();
-        butRemove = new JButton("Remove Item");
-        pnlSubNewOrder3.add(butRemove);                
+        pnlSubNewOrder3 = new JPanel(); //얘는 뭐지
+                             
         
         butConfirmOrder = new JButton("Order");
         butCancelOrder = new JButton("Cancel");
+        butRemove = new JButton("Delete");  
         pnlSubNewOrder2 = new JPanel();
         pnlSubNewOrder2.add(butConfirmOrder);
-        pnlSubNewOrder2.add(butCancelOrder);        
+        pnlSubNewOrder2.add(butCancelOrder);
+        pnlSubNewOrder2.add(butRemove);
         pnlSubNewOrder4 = new JPanel();
         
         pnlNewOrder.add(pnlSubNewOrder,BorderLayout.NORTH);               
@@ -637,14 +641,18 @@ public final class POSForm extends JFrame{
         pnlNewOrder.add(pnlSubNewOrder2, BorderLayout.SOUTH);
         pnlNewOrder.add(pnlSubNewOrder4, BorderLayout.WEST);
         
-        pnlPicTable = new JPanel(new GridLayout(0,5));
-        pnlPicTable.setBorder(new TitledBorder(new EtchedBorder(), "테이블 번호"));        
+        pnlPicTable = new JPanel(new GridLayout(0,5));        
+        pnlPicTable.setBorder(new TitledBorder(new EtchedBorder(), "Select Table"));        
         pnlItemButtons = new JPanel(new GridLayout(0,5));
         int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
         int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
-        jsp = new JScrollPane(pnlItemButtons, v, h);
+        jsp = new JScrollPane(pnlItemButtons, v, h);        
+        pnlTableInfo = new JPanel();
+        pnlTableInfo.setBorder(new TitledBorder(new EtchedBorder(), "Table Details"));
+        
         pnlCusInfo.add(pnlNewOrder);
         pnlCusInfo.add(pnlPicTable); 
+        pnlCusInfo.add(pnlTableInfo);
         
         pnlMainControl.add(pnlCusInfo);        
         pnlMainControl.add(pnlItemButtons);
