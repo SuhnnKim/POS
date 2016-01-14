@@ -31,7 +31,9 @@ public class TableHandler {
     public boolean isOccupied(int tb){
         if(tableNumbers.contains(tb)){
             isOccupied = true;
-        }        
+        }else{
+            isOccupied = false;
+        }      
         return isOccupied;
     }
     
