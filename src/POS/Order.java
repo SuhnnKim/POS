@@ -5,7 +5,6 @@
  */
 package POS;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,17 +12,14 @@ import java.util.List;
  * @author Suhn
  */
 public class Order {
-    int orderNum;
-    int tableNum;
+    int orderNum;    
     double totalPrice;
     List<Item> orderedItems;
     //date and time;
     
     public Order(){}
     
-    public Order(int i,
-                List<Item> list){
-        this.tableNum = i;
+    public Order(List<Item> list){        
         this.orderedItems = list;
     }
     
@@ -47,11 +43,6 @@ public class Order {
         return total;
     }
     
-    public String toString(){
-        String orderDetail = "테이블 " + this.tableNum + "\n" +
-                this.orderedItems.toString() + "\n" +
-                this.getTotal();
-        return orderDetail;
-    }
+    
     
 }

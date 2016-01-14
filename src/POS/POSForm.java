@@ -2,7 +2,6 @@ package POS;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -45,6 +44,7 @@ public final class POSForm extends JFrame{
         displayItems();
         
         th = TableHandler.getInstance();
+        oh = OrderHandler.getInstance();
     }
     
     public static POSForm getInstance(){
@@ -84,7 +84,7 @@ public final class POSForm extends JFrame{
             pnlCusTable.setVisible(true);
             pnlMainControl.setVisible(false);
             pnlItemControl.setVisible(false);
-            showOrders();
+            //showOrders();
             }
         }
     }
@@ -144,17 +144,19 @@ public final class POSForm extends JFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(selItem.isEmpty()){
-                String noItem = "No item is selected";
-                
+                String noItem = "No item is selected";                
                 JOptionPane.showMessageDialog(pnlMainControl,
 			    noItem,
-			    "Inane warning",
+			    "Warning",
     			JOptionPane.WARNING_MESSAGE);                
             }else{            
                 String cmd = e.getActionCommand();
+                // Remove selected item one by one
                 if(cmd.equals(REMOVE_ITEM)){
                     int index = list.getSelectedIndex();
                     selItem.removeElementAt(index);
+                
+                // Preceed order
                 }else if(cmd.equals(PROCEED_ORDER)){
                     Object options[] = {"Cancel", "OK"};
                     String orderDetail = "Table Number: " + lblSelNum.getText() + "\n" +
@@ -167,27 +169,26 @@ public final class POSForm extends JFrame{
                             null,
                             options,
                             options[1]);
-                    if(n==1){                
+                    if(n==1){                                        
+                        foodsToOrder = new ArrayList<>();
+                        for(int k=0; k<selItem.size(); k++){
+                            String it = selItem.getElementAt(k).toString();
+                            Item item = itemMap.get(it);
+                            foodsToOrder.add(item);
+                            System.out.println(it + "has been added");
+                        }
                         JOptionPane.showMessageDialog(pnlNewOrder,
                                 "Order is placed");
                         int tblNum = Integer.parseInt(lblSelNum.getText());
 
-                        List<Item> ordered = new ArrayList<>();
-
-                        for(int k=0; k<selItem.size(); k++){
-                            String it = selItem.getElementAt(k).toString();
-                            Item item = itemMap.get(it);
-                            ordered.add(item);
-                            System.out.println(it + "has been added");
-                        }
-                        Order newOrder = new Order(tblNum, ordered);
-                        orderList.add(newOrder);
+                        oh.addOrder(tblNum, foodsToOrder);                                                
 
                         System.out.println("A new order has been placed successfully");
                         selItem.removeAllElements();
                         lblSelNum.setText("");
                     }
-
+                
+                // Cancel placing order, clear the list of selected items
                 }else if(cmd.equals(CLEAR_SELECTED)){
                     selItem.removeAllElements();
                     lblSelNum.setText("");
@@ -373,23 +374,7 @@ public final class POSForm extends JFrame{
         tblButtons[tn-1].setOpaque(true);
         tblButtons[tn-1].setBackground(Color.red);                
     }                
-    
-    /**
-     * Show current orders on Customer panel
-     */
-    public void showOrders(){
-        pnlCusShow.removeAll();
-        int cusNum = orderList.size();
-        JButton[] cusButtons = new JButton[cusNum];
-        for(int i=0; i<cusNum; i++){
-            String orderDetail = orderList.get(i).toString();
-            cusButtons[i] = new JButton(orderDetail);
-            cusButtons[i].setPreferredSize(new Dimension(100,100));
-            pnlCusShow.add(cusButtons[i]);
-        }
-    }
-    
-            
+             
     /**
      * Declare components
      */  
@@ -473,19 +458,24 @@ public final class POSForm extends JFrame{
     private static final String PROCEED_ORDER = "orderIN";
     private static final int numOfTables = 20;
     private static String CUSTOMER_INFO = "";
+    
+    /**
+     * Handler classes
+     */    
     TableHandler th;
+    OrderHandler oh;
     
     /**
      * Lists
      */
-    //JList for new customer item selection    
+    // JList for new customer item selection    
     DefaultListModel selItem = new DefaultListModel();
     JList list = new JList(selItem);
     HashMap<String, Item> itemMap;
     Iterator<String> iterator;
     
-    //Order list
-    static List<Order> orderList = new ArrayList<>();
+    // Food items to be placed in an order
+    List<Item> foodsToOrder;        
         
     /**
      * Create contents when starting the form

@@ -14,12 +14,10 @@ import java.util.Set;
  * @author Suhn
  */
 public class TableHandler {    
+    private static TableHandler theInstance;
     HashMap<Integer, Table> cusTblList = new HashMap();
     private boolean isOccupied = false;
-    Set tableNumbers = cusTblList.keySet();
-    
-    
-    private static TableHandler theInstance;
+    Set tableNumbers = cusTblList.keySet();  
     
     public static TableHandler getInstance(){
         if(theInstance==null){
