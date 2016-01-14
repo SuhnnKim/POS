@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class TableHandler {    
     HashMap<Integer, Table> cusTblList = new HashMap();
-    private boolean readyToOrder = false;
+    private boolean isOccupied = false;
     Set tableNumbers = cusTblList.keySet();
     
     
@@ -28,12 +28,12 @@ public class TableHandler {
         return theInstance;
     }
     
-//    public boolean isReadyToOrder(int tb){
-//        if(tableNumbers.contains(tb)){
-//            readyToOrder = true;
-//        }        
-//        return readyToOrder;
-//    }
+    public boolean isOccupied(int tb){
+        if(tableNumbers.contains(tb)){
+            isOccupied = true;
+        }        
+        return isOccupied;
+    }
     
     public void addTable(int t, Table table){
         cusTblList.put(t, table);

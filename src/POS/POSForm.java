@@ -148,12 +148,12 @@ public final class POSForm extends JFrame{
                 int index = list.getSelectedIndex();
                 selItem.removeElementAt(index);
             }else if(cmd.equals(PROCEED_ORDER)){
-                Object options[] = {"취소", "확인"};
-                String orderDetail = "테이블 번호: " + lblSelNum.getText() + "\n" +
+                Object options[] = {"Cancel", "OK"};
+                String orderDetail = "Table Number: " + lblSelNum.getText() + "\n" +
                         selItem.toString();
                 int n = JOptionPane.showOptionDialog(pnlNewOrder,
-                        "주문내역 확인 \n" + orderDetail,
-                        "주문확인",
+                        "Ordering below \n" + orderDetail,
+                        "Confirm Order",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.PLAIN_MESSAGE,
                         null,
@@ -161,7 +161,7 @@ public final class POSForm extends JFrame{
                         options[1]);
                 if(n==1){                
                     JOptionPane.showMessageDialog(pnlNewOrder,
-                            "주문완료");
+                            "Order is placed");
                     int tblNum = Integer.parseInt(lblSelNum.getText());
 
                     List<Item> ordered = new ArrayList<>();
@@ -177,12 +177,12 @@ public final class POSForm extends JFrame{
                     
                     System.out.println("A new order has been placed successfully");
                     selItem.removeAllElements();
-                    lblSelNum.setText(null);
+                    lblSelNum.setText("");
                 }
                 
             }else if(cmd.equals(CLEAR_SELECTED)){
                 selItem.removeAllElements();
-                lblSelNum.setText(null);
+                lblSelNum.setText("");
             }
         }
         
@@ -207,28 +207,32 @@ public final class POSForm extends JFrame{
     /**
      * When a table is selected,
      * a dialog to get customer info will pop up
-     * If 'cancel' is clicked, table selection will be cancelled
-     * No customer info input will be accepted
+     * If 'cancel' is clicked, table selection will be canceled.
+     * No customer info input will be accepted.
+     * Implemented only when the table is not already occupied
      */
     private class CusInfoHandler
             implements ActionListener
     {        
         @Override
         public void actionPerformed(ActionEvent e) {
-            String info = (String)JOptionPane.showInputDialog(
-                    pnlMainControl, "Enter customer information");
-            CUSTOMER_INFO = info;            
-            String tblNum = e.getActionCommand();            
-                        
-            String okMsg = info + " is sitting at table " + tblNum;
-            String cancelMsg = "Table selection is cancelled";
-            
-            if(info==null){
-                JOptionPane.showMessageDialog(pnlMainControl, cancelMsg);
-            }else{
-                JOptionPane.showMessageDialog(pnlMainControl, okMsg);
-                th.occupyTable(Integer.parseInt(tblNum), info);
-            }
+            String tblNum = e.getActionCommand();
+            // check if the table is already occupied
+            if(!th.isOccupied(Integer.parseInt(tblNum))){
+                String info = (String)JOptionPane.showInputDialog(
+                        pnlMainControl, "Enter customer information");
+                CUSTOMER_INFO = info;  
+                
+                String okMsg = info + " is sitting at table " + tblNum;
+                String cancelMsg = "Table selection is cancelled";
+
+                if(info==null){
+                    JOptionPane.showMessageDialog(pnlMainControl, cancelMsg);
+                }else{
+                    JOptionPane.showMessageDialog(pnlMainControl, okMsg);
+                    th.occupyTable(Integer.parseInt(tblNum), info);
+                }
+            }                                         
         }        
     }
       
@@ -611,11 +615,11 @@ public final class POSForm extends JFrame{
         scrPane = new JScrollPane(list);
         
         pnlSubNewOrder3 = new JPanel();
-        butRemove = new JButton("삭제");
+        butRemove = new JButton("Remove Item");
         pnlSubNewOrder3.add(butRemove);                
         
-        butConfirmOrder = new JButton("주문확인");
-        butCancelOrder = new JButton("취소하기");
+        butConfirmOrder = new JButton("Order");
+        butCancelOrder = new JButton("Cancel");
         pnlSubNewOrder2 = new JPanel();
         pnlSubNewOrder2.add(butConfirmOrder);
         pnlSubNewOrder2.add(butCancelOrder);        
