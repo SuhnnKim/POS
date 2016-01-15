@@ -71,14 +71,11 @@ public final class POSForm extends JFrame{
             pnlItemControl.setVisible(true);
             pnlMainControl.setVisible(false);
             pnlCusTable.setVisible(false);
-            //Display existing food items
-            //displayItems();
+            
         }else if(cmd.equals(MAIN_CONTROL)){
             pnlMainControl.setVisible(true);
             pnlItemControl.setVisible(false);
             pnlCusTable.setVisible(false);            
-            displayTableButtons();
-            displayItems();
             
         }else if(cmd.equals(CUS_TABLE)){
             pnlCusTable.setVisible(true);
