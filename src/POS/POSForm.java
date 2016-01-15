@@ -442,6 +442,7 @@ public final class POSForm extends JFrame{
     JButton butRemove;
     JButton butConfirmOrder;
     JButton butCancelOrder;
+    JButton butPay;
      
     //Customer Table components
     JPanel pnlCusShow;
@@ -664,12 +665,14 @@ public final class POSForm extends JFrame{
         int v = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
         int h = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
         jsp = new JScrollPane(pnlItemButtons, v, h);        
-        pnlTableInfo = new JPanel();
+        pnlTableInfo = new JPanel(new GridLayout(2,0));
         pnlTableInfo.setBorder(new TitledBorder(new EtchedBorder(), "Table Details"));
         // table number, customer info, state, order details
         tableInfo = new JTextPane();        
         tableInfo.setEditable(false);
         pnlTableInfo.add(tableInfo);
+        butPay = new JButton("Pay");
+        pnlTableInfo.add(butPay);
         
         pnlCusInfo.add(pnlNewOrder);
         pnlCusInfo.add(pnlPicTable); 
