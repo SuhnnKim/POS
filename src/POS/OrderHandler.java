@@ -37,6 +37,10 @@ public class OrderHandler {
         String orderDetail = orderList.get(tn).getDetails();
         return orderDetail;
     }
+    
+    public double getTotalPrice(int tn){
+        return orderList.get(tn).getTotal();
+    }
     /**
      * Show current orders on Customer panel
      */

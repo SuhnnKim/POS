@@ -83,8 +83,7 @@ public final class POSForm extends JFrame{
         }else if(cmd.equals(CUS_TABLE)){
             pnlCusTable.setVisible(true);
             pnlMainControl.setVisible(false);
-            pnlItemControl.setVisible(false);
-            //showOrders();
+            pnlItemControl.setVisible(false);            
             }
         }
     }
@@ -238,11 +237,12 @@ public final class POSForm extends JFrame{
         // table number, customer info, state, order details
         String cus = "Customer Info: " + th.getCusInfo(tn);
         String order = "Order Details: " + oh.getDetails(tn);
-        
+        String total = "Total Price: " + oh.getTotalPrice(tn);
         
         String info = "Table number: " + tn + "\n" +
                         cus + "\n" +
-                        order + "\n";
+                        order + "\n" + "\n" +
+                        total;
         
         tableInfo.setText(info);
     }
