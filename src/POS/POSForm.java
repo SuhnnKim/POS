@@ -336,7 +336,8 @@ public final class POSForm extends JFrame{
     
     public HashMap<String, Item> deserializeMap(){
         try{
-            FileInputStream fin = new FileInputStream("itemMap.ser");
+            final String resourcesPath = "itemMap.ser";
+            FileInputStream fin = new FileInputStream(resourcesPath);                                    
             ObjectInputStream ois = new ObjectInputStream(fin);
             itemMap = (HashMap) ois.readObject();
             ois.close();
